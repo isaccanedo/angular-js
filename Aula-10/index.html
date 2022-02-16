@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AngularJs - TODO LIST</title>
+
+    <link rel="stylesheet" href="https://bootswatch.com/3/paper/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
+    <link rel="stylesheet" href="../bower_components/toastr/toastr.min.css">
+</head>
+<body>
+<div ng-include="'header.html'"></div>
+
+    <div ng-controller="TodoController" class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center">Id</th>
+                    <th class="text-center"><a href="#" ng-click="ordenar('text')"> Tarefas</a></th>
+                    <th class="text-center"><a href="#" ng-click="ordenar('done')"> Status</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5">
+                        <input type="text" 
+                        class="form-control" 
+                        placeholder="Filtrar Tarefa" 
+                        ng-model="filter">
+                    </td>
+                </tr>
+                <tr ng-repeat="todo in todos | filter: filter | orderBy: order"> 
+                    <td class="text-center">{{ todo.id }}</td>
+                    <td class="text-center">{{ todo.text }}</td>
+                    <td class="text-center">{{ todo.done }}</td>
+                    <td class="text-center"><input type="checkbox" ng-model="todo.done"></td>
+                    <td>
+                        <button class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash" ng-click="delete(todo);"></span></button>                      
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-right">
+                        <strong>{{ remaining() }} tarefa(s) restante(s).</strong>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <input type="text" ng-model="todo.text">
+        <button class="btn btn-sm btn-primary" ng-click="add();"><span class="glyphicon glyphicon-plus"></span></button>
+    </div>
+
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/toastr/toastr.min.js"></script>
+    <script src="../bower_components/angular/angular.min.js"></script>
+    
+    <script>
+
+        //Aqui estamos criando um módulo:
+        angular.module('app', []); 
+        var app = angular.module('app');
+
+        app.controller('TodoController', function($scope) {
+            $scope.order = 'text';
+            $scope.todo = { id: 0, text: '', done: true }
+            $scope.todos = [
+                { id: 1, text: 'Tarefa 1', done: true },
+                { id: 2, text: 'Tarefa 2', done: false },
+                { id: 3, text: 'Tarefa 3', done: false },
+                { id: 4, text: 'Tarefa 4', done: true }
+            ];
+
+            $scope.delete = function(todo) {
+                var item = $scope.todos.indexOf(todo);
+                $scope.todos.splice(item, 1);
+            };
+
+            $scope.add = function(todo) {
+                $scope.todo.id = scope.todos.length + 1;
+                $scope.todos.push(todo);
+            };
+
+            $scope.ordenar = function(ordenacao) {
+                $scope.order = ordenacao;
+            };
+
+            $scope.remaining = function () {
+                var count = 0;
+
+                angular.forEach($scope.todos, function (item) {
+                    count += item.done ? 0 : 1;
+                });
+
+                return count;
+            }
+        });
+    </script>
+</body>
+</html>
